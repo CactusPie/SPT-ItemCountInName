@@ -1,5 +1,6 @@
 using System.Reflection;
 using Aki.Reflection.Patching;
+using CactusPie.ItemCountInName.Helpers;
 using EFT.InventoryLogic;
 
 namespace CactusPie.ItemCountInName.Patches
@@ -22,6 +23,11 @@ namespace CactusPie.ItemCountInName.Patches
             }
 
             if (ItemCountPlugin.ItemCountManager.ItemCounts == null)
+            {
+                return;
+            }
+
+            if (ItemCountPlugin.OnlyInRaid.Value && !GameHelper.IsInGame())
             {
                 return;
             }

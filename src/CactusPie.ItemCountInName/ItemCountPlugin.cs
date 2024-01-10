@@ -1,9 +1,11 @@
-﻿using BepInEx;
+﻿using System.Threading.Tasks;
+using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using CactusPie.ItemCountInName.Configuration;
 using CactusPie.ItemCountInName.Patches;
 using CactusPie.ItemCountInName.Services;
+using EFT.Hideout;
 using JetBrains.Annotations;
 
 namespace CactusPie.ItemCountInName
@@ -14,6 +16,8 @@ namespace CactusPie.ItemCountInName
         internal static ManualLogSource PluginLogger { get; private set; }
 
         internal static ConfigEntry<bool> Enabled { get; set; }
+
+        internal static ConfigEntry<bool> OnlyInRaid { get; set; }
 
         internal static ConfigEntry<string> ItemNameFormat { get; private set; }
 
@@ -42,6 +46,19 @@ namespace CactusPie.ItemCountInName
                 )
             );
 
+            OnlyInRaid = Config.Bind
+            (
+                configSection,
+                "Only in raid",
+                true,
+                new ConfigDescription
+                (
+                    "Whether or not the mod is should only work during a raid",
+                    null,
+                    new ConfigurationManagerAttributes { Order = 90 }
+                )
+            );
+
             ItemNameFormat = Config.Bind(
                 configSection,
                 "Item name format",
@@ -49,7 +66,7 @@ namespace CactusPie.ItemCountInName
                 new ConfigDescription(
                     "How the item name should be formatted. {0} - found in raid count, {1} - total count, {2} item name",
                     null,
-                    new ConfigurationManagerAttributes { Order = 90 })
+                    new ConfigurationManagerAttributes { Order = 80 })
             );
 
             ZeroItemsFormat = Config.Bind(
@@ -59,13 +76,22 @@ namespace CactusPie.ItemCountInName
                 new ConfigDescription(
                     "Used when there are no matching items in stash. {0} - item name",
                     null,
-                    new ConfigurationManagerAttributes { Order = 80 })
+                    new ConfigurationManagerAttributes { Order = 70 })
             );
 
             ItemCountManager = new ItemCountManager();
 
+            new GetProducedItemsPatch<FarmingView>().Enable();
+            new GetProducedItemsPatch<PermanentProductionView>().Enable();
+            new GetProducedItemsPatch<ProduceView>().Enable();
+            new GetProducedItemsPatch<ScavCaseView>().Enable();
+            new ConfirmPurchasePatch().Enable();
+            new ConfirmSellPatch().Enable();
             new GameStartPatch().Enable();
             new ItemCountPatch().Enable();
+            new InventoryShowPatch().Enable();
+
+            OnlyInRaid.SettingChanged += (sender, args) => ItemCountManager.ReloadItemCounts();
         }
     }
 }

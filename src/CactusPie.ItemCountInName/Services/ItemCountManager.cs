@@ -22,8 +22,8 @@ namespace CactusPie.ItemCountInName.Services
                     select new ItemCountData
                     {
                         Template = groupedItem.First().Template,
-                        TotalCount = groupedItem.Count(),
-                        FoundInRaidCount = groupedItem.Count(x => x.MarkedAsSpawnedInSession),
+                        TotalCount = groupedItem.Select(x => x.StackObjectsCount).Sum(),
+                        FoundInRaidCount = groupedItem.Where(x => x.MarkedAsSpawnedInSession).Select(x => x.StackObjectsCount).Sum(),
                     }
                 ).ToDictionary(itemCountData => itemCountData.Template._id, itemCountData => itemCountData);
             }
