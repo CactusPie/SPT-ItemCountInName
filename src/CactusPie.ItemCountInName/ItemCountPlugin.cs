@@ -1,8 +1,5 @@
-﻿using System.Threading.Tasks;
-using BepInEx;
-using BepInEx.Configuration;
+﻿using BepInEx;
 using BepInEx.Logging;
-using CactusPie.ItemCountInName.Configuration;
 using CactusPie.ItemCountInName.Patches;
 using CactusPie.ItemCountInName.Services;
 using EFT.Hideout;
@@ -15,111 +12,15 @@ namespace CactusPie.ItemCountInName
     {
         internal static ManualLogSource PluginLogger { get; private set; }
 
-        internal static ConfigEntry<bool> Enabled { get; set; }
-
-        internal static ConfigEntry<bool> OnlyInRaid { get; set; }
-
-        internal static ConfigEntry<bool> ApplyToMoney { get; set; }
-
-        internal static ConfigEntry<bool> ApplyToAmmo { get; set; }
-
-        internal static ConfigEntry<string> ItemNameFormat { get; private set; }
-
-        internal static ConfigEntry<string> ZeroItemsFormat { get; private set; }
-
         internal static IItemCountManager ItemCountManager { get; private set; }
 
         [UsedImplicitly]
         internal void Start()
         {
             PluginLogger = Logger;
-            PluginLogger.LogInfo("ItemCountInName loaded");
-
-            const string configSection = "Item count settings";
-
-            Enabled = Config.Bind
-            (
-                configSection,
-                "Mod enabled",
-                true,
-                new ConfigDescription
-                (
-                    "Whether or not the mod is enabled",
-                    null,
-                    new ConfigurationManagerAttributes { Order = 100 }
-                )
-            );
-
-            OnlyInRaid = Config.Bind
-            (
-                configSection,
-                "Only in raid",
-                true,
-                new ConfigDescription
-                (
-                    "Whether or not the mod is should only work during a raid",
-                    null,
-                    new ConfigurationManagerAttributes { Order = 90 }
-                )
-            );
-
-            ItemNameFormat = Config.Bind(
-                configSection,
-                "Item name format",
-                "[{0}/{1}] {2}",
-                new ConfigDescription(
-                    "How the item name should be formatted. {0} - found in raid count, {1} - total count, {2} item name",
-                    null,
-                    new ConfigurationManagerAttributes { Order = 80 })
-            );
-
-            ZeroItemsFormat = Config.Bind(
-                configSection,
-                "Format for no items",
-                "[0] {0}",
-                new ConfigDescription(
-                    "Used when there are no matching items in stash. {0} - item name",
-                    null,
-                    new ConfigurationManagerAttributes { Order = 70 })
-            );
-
-            const string filtersSection = "Type filters";
-
-            ApplyToMoney = Config.Bind
-            (
-                filtersSection,
-                "ApplyToMoney",
-                false,
-                new ConfigDescription
-                (
-                    "Whether or not the count should be added to money",
-                    null,
-                    new ConfigurationManagerAttributes
-                    {
-                        DispName = "Money",
-                        Order = 100
-                    }
-                )
-            );
-
-            ApplyToAmmo = Config.Bind
-            (
-                filtersSection,
-                "ApplyToAmmo",
-                false,
-                new ConfigDescription
-                (
-                    "Whether or not the count should be added to ammo",
-                    null,
-                    new ConfigurationManagerAttributes
-                    {
-                        DispName = "Ammo",
-                        Order = 95
-                    }
-                )
-            );
 
             ItemCountManager = new ItemCountManager();
+            ItemCountConfiguration.BindConfiguration(Config, ItemCountManager);
 
             new GetProducedItemsPatch<FarmingView>().Enable();
             new GetProducedItemsPatch<PermanentProductionView>().Enable();
@@ -131,13 +32,6 @@ namespace CactusPie.ItemCountInName
             new ItemCountPatch().Enable();
             new InventoryShowPatch().Enable();
 
-            OnlyInRaid.SettingChanged += (sender, args) => ItemCountManager.ReloadItemCounts();
-
-            PluginLogger.LogError("Apply to money: " + ApplyToMoney.Value);
-            ItemCountManager.SetMoneyCountVisibility(ApplyToMoney.Value);
-            ItemCountManager.SetAmmoCountVisibility(ApplyToAmmo.Value);
-            ApplyToMoney.SettingChanged += (sender, args) => ItemCountManager.SetMoneyCountVisibility(ApplyToMoney.Value);
-            ApplyToAmmo.SettingChanged += (sender, args) => ItemCountManager.SetAmmoCountVisibility(ApplyToAmmo.Value);
         }
     }
 }

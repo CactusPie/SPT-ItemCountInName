@@ -11,8 +11,6 @@ namespace CactusPie.ItemCountInName.Services
 
         bool IsCountVisibleForItem(Item item);
 
-        void SetMoneyCountVisibility(bool isCountVisible);
-
-        void SetAmmoCountVisibility(bool isCountVisible);
+        void SetParentIdVisibility(bool isCountVisible, string parentId);
     }
 }

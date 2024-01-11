@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Comfort.Common;
-using EFT.HandBook;
 using EFT.InventoryLogic;
 
 namespace CactusPie.ItemCountInName.Services
@@ -20,7 +19,7 @@ namespace CactusPie.ItemCountInName.Services
             {
                 ItemCounts = (
                     from item in inventoryItems
-                    where !_parentIdBlackList.Contains(item.Template._parent)
+                    where IsCountVisibleForItem(item)
                     group item by item.Template._id
                     into groupedItem
                     select new ItemCountData
@@ -35,21 +34,27 @@ namespace CactusPie.ItemCountInName.Services
 
         public bool IsCountVisibleForItem(Item item)
         {
-            bool result = !_parentIdBlackList.Contains(item.Template._parent);
-            return result;
+            ItemTemplate itemTemplate = item.Template;
+
+            while (itemTemplate != null)
+            {
+                if (_parentIdBlackList.Contains(itemTemplate._id))
+                {
+                    return false;
+                }
+
+                if (string.IsNullOrEmpty(itemTemplate._parent))
+                {
+                    return true;
+                }
+
+                itemTemplate = itemTemplate.Parent;
+            }
+
+            return true;
         }
 
-        public void SetMoneyCountVisibility(bool isCountVisible)
-        {
-            SetParentIdVisibility(isCountVisible, "543be5dd4bdc2deb348b4569");
-        }
-
-        public void SetAmmoCountVisibility(bool isCountVisible)
-        {
-            SetParentIdVisibility(isCountVisible, "5485a8684bdc2da71d8b4567");
-        }
-
-        private void SetParentIdVisibility(bool isCountVisible, string parentId)
+        public void SetParentIdVisibility(bool isCountVisible, string parentId)
         {
             if (isCountVisible)
             {

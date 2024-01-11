@@ -1,6 +1,7 @@
 using System.Reflection;
 using Aki.Reflection.Patching;
 using CactusPie.ItemCountInName.Helpers;
+using CactusPie.ItemCountInName.Services;
 using EFT.InventoryLogic;
 
 namespace CactusPie.ItemCountInName.Patches
@@ -17,9 +18,9 @@ namespace CactusPie.ItemCountInName.Patches
         [PatchPostfix]
         public static void PatchPostfix(ref string __result, Item item, string defaultName)
         {
-            if (!ItemCountPlugin.Enabled.Value ||
+            if (!ItemCountConfiguration.Enabled.Value ||
                 ItemCountPlugin.ItemCountManager.ItemCounts == null ||
-                (ItemCountPlugin.OnlyInRaid.Value && !GameHelper.IsInGame()) ||
+                (ItemCountConfiguration.OnlyInRaid.Value && !GameHelper.IsInGame()) ||
                 !ItemCountPlugin.ItemCountManager.IsCountVisibleForItem(item)
                 )
             {
@@ -28,11 +29,11 @@ namespace CactusPie.ItemCountInName.Patches
 
             if (ItemCountPlugin.ItemCountManager.ItemCounts.TryGetValue(item.TemplateId, out ItemCountData itemCountData))
             {
-                __result = string.Format(ItemCountPlugin.ItemNameFormat.Value, itemCountData.FoundInRaidCount, itemCountData.TotalCount, __result);
+                __result = string.Format(ItemCountConfiguration.ItemNameFormat.Value, itemCountData.FoundInRaidCount, itemCountData.TotalCount, __result);
             }
             else
             {
-                __result = string.Format(ItemCountPlugin.ZeroItemsFormat.Value, __result);
+                __result = string.Format(ItemCountConfiguration.ZeroItemsFormat.Value, __result);
             }
         }
     }
