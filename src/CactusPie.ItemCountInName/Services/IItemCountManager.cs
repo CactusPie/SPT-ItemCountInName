@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using EFT.InventoryLogic;
 
 namespace CactusPie.ItemCountInName.Services
 {
@@ -7,5 +8,11 @@ namespace CactusPie.ItemCountInName.Services
         IReadOnlyDictionary<string, ItemCountData> ItemCounts { get; }
 
         void ReloadItemCounts();
+
+        bool IsCountVisibleForItem(Item item);
+
+        void SetMoneyCountVisibility(bool isCountVisible);
+
+        void SetAmmoCountVisibility(bool isCountVisible);
     }
 }

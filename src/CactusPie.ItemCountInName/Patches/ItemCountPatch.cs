@@ -17,17 +17,11 @@ namespace CactusPie.ItemCountInName.Patches
         [PatchPostfix]
         public static void PatchPostfix(ref string __result, Item item, string defaultName)
         {
-            if (!ItemCountPlugin.Enabled.Value)
-            {
-                return;
-            }
-
-            if (ItemCountPlugin.ItemCountManager.ItemCounts == null)
-            {
-                return;
-            }
-
-            if (ItemCountPlugin.OnlyInRaid.Value && !GameHelper.IsInGame())
+            if (!ItemCountPlugin.Enabled.Value ||
+                ItemCountPlugin.ItemCountManager.ItemCounts == null ||
+                (ItemCountPlugin.OnlyInRaid.Value && !GameHelper.IsInGame()) ||
+                !ItemCountPlugin.ItemCountManager.IsCountVisibleForItem(item)
+                )
             {
                 return;
             }

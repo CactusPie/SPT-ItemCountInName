@@ -19,6 +19,10 @@ namespace CactusPie.ItemCountInName
 
         internal static ConfigEntry<bool> OnlyInRaid { get; set; }
 
+        internal static ConfigEntry<bool> ApplyToMoney { get; set; }
+
+        internal static ConfigEntry<bool> ApplyToAmmo { get; set; }
+
         internal static ConfigEntry<string> ItemNameFormat { get; private set; }
 
         internal static ConfigEntry<string> ZeroItemsFormat { get; private set; }
@@ -79,6 +83,42 @@ namespace CactusPie.ItemCountInName
                     new ConfigurationManagerAttributes { Order = 70 })
             );
 
+            const string filtersSection = "Type filters";
+
+            ApplyToMoney = Config.Bind
+            (
+                filtersSection,
+                "ApplyToMoney",
+                false,
+                new ConfigDescription
+                (
+                    "Whether or not the count should be added to money",
+                    null,
+                    new ConfigurationManagerAttributes
+                    {
+                        DispName = "Money",
+                        Order = 100
+                    }
+                )
+            );
+
+            ApplyToAmmo = Config.Bind
+            (
+                filtersSection,
+                "ApplyToAmmo",
+                false,
+                new ConfigDescription
+                (
+                    "Whether or not the count should be added to ammo",
+                    null,
+                    new ConfigurationManagerAttributes
+                    {
+                        DispName = "Ammo",
+                        Order = 95
+                    }
+                )
+            );
+
             ItemCountManager = new ItemCountManager();
 
             new GetProducedItemsPatch<FarmingView>().Enable();
@@ -92,6 +132,12 @@ namespace CactusPie.ItemCountInName
             new InventoryShowPatch().Enable();
 
             OnlyInRaid.SettingChanged += (sender, args) => ItemCountManager.ReloadItemCounts();
+
+            PluginLogger.LogError("Apply to money: " + ApplyToMoney.Value);
+            ItemCountManager.SetMoneyCountVisibility(ApplyToMoney.Value);
+            ItemCountManager.SetAmmoCountVisibility(ApplyToAmmo.Value);
+            ApplyToMoney.SettingChanged += (sender, args) => ItemCountManager.SetMoneyCountVisibility(ApplyToMoney.Value);
+            ApplyToAmmo.SettingChanged += (sender, args) => ItemCountManager.SetAmmoCountVisibility(ApplyToAmmo.Value);
         }
     }
 }
