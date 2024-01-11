@@ -21,11 +21,11 @@ namespace CactusPie.ItemCountInName.Services
                 ConfigEntry<bool> configEntry = configFile.Bind
                 (
                     configSection,
-                    $"ShowCountFor{filterCheckbox.CategoryName.Replace(" ", "")}",
+                    $"HideCountFor{filterCheckbox.CategoryName.Replace(" ", "")}",
                     filterCheckbox.DefaultValue,
                     new ConfigDescription
                     (
-                        "Whether or not the count should be added to this type of items",
+                        "Whether or not the count should be hidden on this type of items",
                         null,
                         new ConfigurationManagerAttributes
                         {
@@ -35,11 +35,11 @@ namespace CactusPie.ItemCountInName.Services
                     )
                 );
 
-                itemCountManager.SetParentIdVisibility(configEntry.Value, filterCheckbox.ParentId);
+                itemCountManager.SetParentIdBlacklist(configEntry.Value, filterCheckbox.ParentId);
 
                 configEntry.SettingChanged += (sender, args) =>
                 {
-                    itemCountManager.SetParentIdVisibility(configEntry.Value, filterCheckbox.ParentId);
+                    itemCountManager.SetParentIdBlacklist(configEntry.Value, filterCheckbox.ParentId);
                 };
 
                 configEntries.Add(configEntry);

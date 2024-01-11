@@ -9,8 +9,8 @@ namespace CactusPie.ItemCountInName.Services
 
         void ReloadItemCounts();
 
-        bool IsCountVisibleForItem(Item item);
+        bool IsItemOnBlacklist(Item item);
 
-        void SetParentIdVisibility(bool isCountVisible, string parentId);
+        void SetParentIdBlacklist(bool isBlacklisted, string parentId);
     }
 }

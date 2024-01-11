@@ -19,7 +19,7 @@ namespace CactusPie.ItemCountInName.Services
             {
                 ItemCounts = (
                     from item in inventoryItems
-                    where IsCountVisibleForItem(item)
+                    where !IsItemOnBlacklist(item)
                     group item by item.Template._id
                     into groupedItem
                     select new ItemCountData
@@ -32,7 +32,7 @@ namespace CactusPie.ItemCountInName.Services
             }
         }
 
-        public bool IsCountVisibleForItem(Item item)
+        public bool IsItemOnBlacklist(Item item)
         {
             ItemTemplate itemTemplate = item.Template;
 
@@ -40,29 +40,29 @@ namespace CactusPie.ItemCountInName.Services
             {
                 if (_parentIdBlackList.Contains(itemTemplate._id))
                 {
-                    return false;
+                    return true;
                 }
 
                 if (string.IsNullOrEmpty(itemTemplate._parent))
                 {
-                    return true;
+                    break;
                 }
 
                 itemTemplate = itemTemplate.Parent;
             }
 
-            return true;
+            return false;
         }
 
-        public void SetParentIdVisibility(bool isCountVisible, string parentId)
+        public void SetParentIdBlacklist(bool isBlacklisted, string parentId)
         {
-            if (isCountVisible)
+            if (isBlacklisted)
             {
-                _parentIdBlackList.Remove(parentId);
+                _parentIdBlackList.Add(parentId);
             }
             else
             {
-                _parentIdBlackList.Add(parentId);
+                _parentIdBlackList.Remove(parentId);
             }
         }
     }

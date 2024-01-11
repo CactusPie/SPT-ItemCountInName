@@ -74,19 +74,20 @@ namespace CactusPie.ItemCountInName.Services
             FiltersConfig = FilterConfigBinder.BindFilterCheckboxes(
                 configFile,
                 1000,
-                "Type filters",
+                "Item type blacklist",
                 itemCountManager,
                 new[]
                 {
-                    new FilterCheckboxData("543be5dd4bdc2deb348b4569", "Money", false),
-                    new FilterCheckboxData("5485a8684bdc2da71d8b4567", "Ammo", false),
-                    new FilterCheckboxData("5448eb774bdc2d0a728b4567", "Barter Items", true),
-                    new FilterCheckboxData("543be5f84bdc2dd4348b456a", "Equipment", true),
-                    new FilterCheckboxData("5422acb9af1c889c16000029", "Weapons", true),
-                    new FilterCheckboxData("566162e44bdc2d3f298b4573", "Mods", true),
-                    new FilterCheckboxData("543be5e94bdc2df1348b4568", "Keys", true),
-                    new FilterCheckboxData("543be5664bdc2dd4348b4569", "Medication", true),
-                    new FilterCheckboxData("543be6674bdc2df1348b4569", "Food And Drinks", true),
+                    new FilterCheckboxData("543be5dd4bdc2deb348b4569", "Money", true),
+                    new FilterCheckboxData("5485a8684bdc2da71d8b4567", "Ammo", true),
+                    new FilterCheckboxData("5448eb774bdc2d0a728b4567", "Barter Items", false),
+                    new FilterCheckboxData("543be5f84bdc2dd4348b456a", "Equipment", false),
+                    new FilterCheckboxData("5422acb9af1c889c16000029", "Weapons", false),
+                    new FilterCheckboxData("566162e44bdc2d3f298b4573", "Mods", false),
+                    new FilterCheckboxData("543be5e94bdc2df1348b4568", "Keys", false),
+                    new FilterCheckboxData("543be5664bdc2dd4348b4569", "Medication", false),
+                    new FilterCheckboxData("543be6674bdc2df1348b4569", "Food And Drinks", false),
+                    new FilterCheckboxData("543be6564bdc2df4348b4568", "Grenades", false),
                 });
 
             OnlyInRaid.SettingChanged += (sender, args) => itemCountManager.ReloadItemCounts();

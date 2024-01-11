@@ -21,7 +21,7 @@ namespace CactusPie.ItemCountInName.Patches
             if (!ItemCountConfiguration.Enabled.Value ||
                 ItemCountPlugin.ItemCountManager.ItemCounts == null ||
                 (ItemCountConfiguration.OnlyInRaid.Value && !GameHelper.IsInGame()) ||
-                !ItemCountPlugin.ItemCountManager.IsCountVisibleForItem(item)
+                ItemCountPlugin.ItemCountManager.IsItemOnBlacklist(item)
                 )
             {
                 return;
