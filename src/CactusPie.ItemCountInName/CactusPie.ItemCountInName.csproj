@@ -41,10 +41,6 @@
             <HintPath>..\References\EFT_Managed\UnityEngine.CoreModule.dll</HintPath>
             <Private>False</Private>
         </Reference>
-        <Reference Include="UnityEngine.InputLegacyModule">
-            <HintPath>..\References\EFT_Managed\UnityEngine.InputLegacyModule.dll</HintPath>
-            <Private>False</Private>
-        </Reference>
     </ItemGroup>
 
 </Project>
